@@ -7,6 +7,9 @@
 #include "Styling/SlateIconFinder.h"
 #include "IDesktopPlatform.h"
 #include "DesktopPlatformModule.h"
+
+#include "EditorStyleSet.h"
+
 #include "SlateOptMacros.h"
 
 BEGIN_SLATE_FUNCTION_BUILD_OPTIMIZATION
@@ -14,88 +17,118 @@ void SLessonToolbar::Construct(const FArguments& InArgs)
 {
 	LessonManager = InArgs._LessonManager;
 
-	ComboItems.Add(MakeShared<FString>("Opzione 1"));
-	ComboItems.Add(MakeShared<FString>("Opzione 2"));
-	ComboItems.Add(MakeShared<FString>("Opzione 3"));
+	ComboItems.Add(MakeShared<FString>("VI"));
+	ComboItems.Add(MakeShared<FString>("MP"));
+	ComboItems.Add(MakeShared<FString>("TEST"));
+
+	const FLessonToolbarStyle* Style = &FLessonToolbarStyle::GetDefault();
+
+	ULessonData* ActiveLesson = LessonManager->GetActiveLesson();
 
 	ChildSlot
 	[
-		SNew(SHorizontalBox)
+		SNew(SBorder)
+		.Padding(FMargin(4))
+		.BorderImage(FAppStyle::Get()
+			.GetBrush("Graph.Panel.SolidBackground"))		
 
-		// === OPEN ===
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(5, 0)
 		[
-			MakeToolbarButton(
-				"Icons.Document",
-				FText::FromString("Open Procedure"),
-				"FlatButton.Default",
-				FOnClicked::CreateSP(this, &SLessonToolbar::OnOpenProcedureFile))
-		]
+			SNew(SBox)
+			.HeightOverride(30.f) // altezza barra
+			[				
+				SNew(SHorizontalBox)
 
-		+ HBOX_SEPARATOR_SLOT()
-
-		// === SAVE ===
-		+ SHorizontalBox::Slot()
-		.AutoWidth()
-		.Padding(5, 0)
-		[
-			MakeToolbarButton(
-				"Icons.Save",
-				FText::FromString("Save Procedure"),
-				"FlatButton.Default",
-				FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
-		]
-
-		+ HBOX_SEPARATOR_SLOT()
-
-		// === Open Folder ===
-		+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
-		[
-			MakeToolbarButton(
-				"Icons.FolderOpen",
-				FText::FromString("Save Procedure"),
-				"FlatButton.Default",
-				FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
-
-		]
-
-		+ HBOX_SEPARATOR_SLOT()
-
-		// === DIFF BTN ===
-		+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
-		[
-			SNew(SButton)
-			[
-				SNew(STextBlock).Text(FText::FromString("Diff"))
-			]
-		]
-
-		+ HBOX_SEPARATOR_SLOT()
-
-		// === FIND BTN ===
-		+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
-		[
-			MakeToolbarButton(
-				"Icons.Search",
-				FText::FromString("Search for"),
-				"FlatButton.Default",
-				FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
-		]
-
-		+ HBOX_SEPARATOR_SLOT()
-
-		// === COMBO ===
-		+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
-		[
-			SNew(SComboBox<TSharedPtr<FString>>)
-				.OptionsSource(&ComboItems)
-				.OnGenerateWidget(this, &SLessonToolbar::GenerateComboItem)
+				// === Import ===
+				+ SHorizontalBox::Slot()
+				.AutoWidth()			
+				.Padding(5, 0)
 				[
-					SNew(STextBlock).Text(FText::FromString("Mode"))
+					MakeToolbarButton(
+						"Icons.Import",
+						FText::FromString("Open Procedure"),			
+						FOnClicked::CreateSP(this, &SLessonToolbar::OnOpenProcedureFile))
+				]
+			
+
+				// === SAVE ===
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(2, 0)
+				[
+					MakeToolbarButton(
+						"Icons.Save",
+						//"Icons.SaveChanged"
+						FText::FromString("Save Procedure"),					
+						FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
+				]
+			
+
+				// === Open Folder ===
+				+ SHorizontalBox::Slot()
+					.AutoWidth()
+					.Padding(2, 0)
+				[
+					MakeToolbarButton(
+						"Icons.BrowseContent",
+						FText::FromString("Open Folder"),					
+						FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
+				]
+
+			+ HBOX_SEPARATOR_SLOT()
+
+				// === DIFF BTN ===
+				+ SHorizontalBox::Slot()
+				.AutoWidth()
+				.Padding(2, 0)
+				[
+					MakeToolbarButton(
+						"Icons.Tasks",
+						FText::FromString("Diff from last edit"),
+						FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
+				]			
+
+				// === FIND BTN ===
+				+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
+				[
+					MakeToolbarButton(
+						"Icons.Search",
+						FText::FromString("Search for"),					
+						FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
+				]
+
+			   + HBOX_SEPARATOR_SLOT()
+
+				// --- Centro ---
+				// === COMBO ===
+				+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
+				[
+					SNew(SComboBox<TSharedPtr<FString>>)
+						.OptionsSource(&ComboItems)
+						.OnGenerateWidget(this, &SLessonToolbar::GenerateComboItem)
+						[					
+							SNew(STextBlock).Text(ActiveLesson ? 
+								FText::FromString(ActiveLesson->LessonMode) :
+								FText::FromString("Mode"))
+						]
+				]
+
+				+ SHorizontalBox::Slot().AutoWidth().Padding(8, 0)
+				[
+					MakeToolbarButton(
+						"LevelEditor.AddActor",
+						FText::FromString("Show / Add Window"),
+						FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
+				]
+
+				+ HBOX_SEPARATOR_SLOT()
+
+				// --- Destra ---
+				+ SHorizontalBox::Slot().AutoWidth().HAlign(HAlign_Right).Padding(8, 0)
+				[
+					MakeToolbarSequenceBox()
 				]
 		]
+		]		
 	];
 }
 
@@ -104,17 +137,75 @@ TSharedRef<SWidget> SLessonToolbar::GenerateComboItem(TSharedPtr<FString> InItem
 	return SNew(STextBlock).Text(FText::FromString(*InItem));
 }
 
-TSharedRef<SWidget> SLessonToolbar::MakeToolbarButton(const FName& Icon, const FText& Tooltip, const FName& ButtonStyle, FOnClicked OnClicked, FLinearColor ColorOpacity)
+TSharedRef<SWidget> SLessonToolbar::MakeToolbarButton(const FName& Icon, const FText& Tooltip,FOnClicked OnClicked, FLinearColor ColorOpacity)
 {
+	const FLessonToolbarStyle* Style = &FLessonToolbarStyle::GetDefault();
+
 	return SNew(SButton)
-		.ToolTipText(Tooltip)
-		.ButtonStyle(FAppStyle::Get(), ButtonStyle)
+		.ToolTipText(Tooltip)	
+		.ButtonStyle(&Style->ButtonStyle)		
 		.OnClicked(OnClicked)
+		.Content()
 		[
 			SNew(SImage)
 				.Image(FAppStyle::GetBrush(Icon))
 				.ColorAndOpacity(ColorOpacity)
 		];
+}
+
+TSharedRef<SWidget> SLessonToolbar::MakeToolbarSequenceBox()
+{
+	return 
+		SNew(SHorizontalBox)
+
+		// === PLAY ===
+		+ SHorizontalBox::Slot().AutoWidth()
+		[
+			SNew(SButton)
+				//.ButtonStyle(&Style->GetWidgetStyle<FButtonStyle>("MyToolbar.Button"))
+				.ToolTipText(FText::FromString("Play"))
+				[
+					SNew(SImage)
+						.Image(FEditorStyle::GetBrush("PlayWorld.PlayInViewport"))
+
+				]
+		]
+
+		// === STEP ===
+		+ SHorizontalBox::Slot().AutoWidth()
+		[
+			SNew(SButton)
+				//.ButtonStyle(&Style->GetWidgetStyle<FButtonStyle>("MyToolbar.Button"))
+				.ToolTipText(FText::FromString("Step"))
+				[
+					SNew(SImage)
+						//.Image(F::GetBrush("Icons.SingleFrameAdvance"))
+				]
+		]
+
+		// === PAUSE ===
+		+ SHorizontalBox::Slot().AutoWidth()
+		[
+			SNew(SButton)
+				//.ButtonStyle(&Style->GetWidgetStyle<FButtonStyle>("MyToolbar.Button"))
+				.ToolTipText(FText::FromString("Pause"))
+				[
+					SNew(SImage)
+						.Image(FEditorStyle::GetBrush("PlayWorld.PausePlaySession.Small"))
+				]
+		]
+
+		// === STOP ===
+		+ SHorizontalBox::Slot().AutoWidth()
+		[
+			SNew(SButton)
+				//.ButtonStyle(&Style->GetWidgetStyle<FButtonStyle>("MyToolbar.Button"))
+				.ToolTipText(FText::FromString("Stop"))
+				[
+					SNew(SImage)
+						.Image(FEditorStyle::GetBrush("PlayWorld.StopPlaySession.Small"))
+				]
+		];		
 }
 
 FReply SLessonToolbar::OnSaveProcedureFIle()
@@ -143,24 +234,13 @@ FReply SLessonToolbar::OnOpenProcedureFile()
 			FPaths::ProjectContentDir(),
 			TEXT(""),
 			TEXT("XML Files (*.xml)|*.xml"),
-			EFileDialogFlags::None,
+			EFileDialogFlags::Multiple,
 			OutFiles
 		);
 
 		if (bOpened && OutFiles.Num() > 0)
 		{
 			OnFileSelected(OutFiles);
-		}
-	}
-
-	if (LessonManager.IsValid())
-	{
-		auto Lesson = LessonManager->GetActiveLesson();
-		if (Lesson)
-		{
-			Lesson->LessonName = TEXT("Loaded From XML");
-			LessonManager->OnLessonListChanged.Broadcast();
-			LessonManager->OnActiveLessonChanged.Broadcast();
 		}
 	}
 
@@ -180,12 +260,6 @@ void SLessonToolbar::OnFileSelected(const TArray<FString>& FilePaths)
 			LessonManager->AddLesson(NewLesson);
 		}
 	}
-
-	//ULessonData* NewLesson = NewObject<ULessonData>();
-	//if (NewLesson->LoadFromXML(FilePath))
-	//{
-	//	OnLessonLoaded.ExecuteIfBound(NewLesson); 
-	//}
 }
 
 //FReply SLessonToolbar::OnCloseClicked()

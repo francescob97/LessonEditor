@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Widgets/SCompoundWidget.h"
 #include "../LessonManager.h"
+#include "../Styles/LessonToolbarWidgetStyle.h"
 
 #define HBOX_SEPARATOR_SLOT() \
     SHorizontalBox::Slot() \
@@ -36,11 +37,13 @@ private:
 
 	static TSharedRef<SWidget> MakeToolbarButton(
 		const FName& Icon,
-		const FText& Tooltip,
-		const FName& ButtonStyle,
+		const FText& Tooltip,	
 		FOnClicked OnClicked,
 		FLinearColor ColorOpacity = FLinearColor::White
 	);
+
+	static TSharedRef<SWidget> MakeToolbarSequenceBox();
+	TSharedPtr<FString> SelectedComboItem;
 
 
 	FReply OnOpenProcedureFile();

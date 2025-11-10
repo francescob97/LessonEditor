@@ -24,7 +24,15 @@ public class LessonEditor : ModuleRules
             }
         );
 
-        PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore", "XmlParser", "DesktopPlatform" });
+        PrivateDependencyModuleNames.AddRange(
+            new string[] 
+            { 
+                "Slate", 
+                "SlateCore", 
+                "XmlParser", 
+                "DesktopPlatform",
+                "EditorStyle"
+            });
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
