@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Lesson>
+    <ID>1</ID>
+    <Version>2</Version>
+    <LastSaveDate>09/11/2025</LastSaveDate>
+    <Name>Left Engine Fire</Name>
+    <Mode>VI</Mode>
+    <Properties>
+        <Author>Marco Rossi</Author>
+        <Description>Una lezione introduttiva per imparare i fondamentali della spada</Description>
+    </Properties>
+    <Graph>
+        <Node>        
+            <ID></ID>
+            <Name></Name>
+            <Connections></Connections>
+        </Node>
+    </Graph>
+</Lesson>
