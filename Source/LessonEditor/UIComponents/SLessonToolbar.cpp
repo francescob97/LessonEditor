@@ -25,111 +25,160 @@ void SLessonToolbar::Construct(const FArguments& InArgs)
 
 	ULessonData* ActiveLesson = LessonManager->GetActiveLesson();
 
+
 	ChildSlot
-	[
-		SNew(SBorder)
-		.Padding(FMargin(4))
-		.BorderImage(FAppStyle::Get()
-			.GetBrush("Graph.Panel.SolidBackground"))		
-
 		[
-			SNew(SBox)
-			.HeightOverride(30.f) // altezza barra
-			[				
-				SNew(SHorizontalBox)
+			SNew(SBorder)
+				.Padding(FMargin(4))
+				.BorderImage(FAppStyle::Get()
+					.GetBrush("Graph.Panel.SolidBackground"))
 
-				// === Import ===
-				+ SHorizontalBox::Slot()
-				.AutoWidth()			
-				.Padding(5, 0)
 				[
-					MakeToolbarButton(
-						"Icons.Import",
-						FText::FromString("Open Procedure"),			
-						FOnClicked::CreateSP(this, &SLessonToolbar::OnOpenProcedureFile))
-				]
-			
+					SNew(SBox)
+						.HeightOverride(30.f) // altezza barra
+						[
+							SNew(SHorizontalBox)
 
-				// === SAVE ===
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(2, 0)
-				[
-					MakeToolbarButton(
-						"Icons.Save",
-						//"Icons.SaveChanged"
-						FText::FromString("Save Procedure"),					
-						FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
-				]
-			
 
-				// === Open Folder ===
-				+ SHorizontalBox::Slot()
-					.AutoWidth()
-					.Padding(2, 0)
-				[
-					MakeToolbarButton(
-						"Icons.BrowseContent",
-						FText::FromString("Open Folder"),					
-						FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
-				]
+							// ================= LEFT =================
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								MakeLeftToolbar()
+							]
 
-			+ HBOX_SEPARATOR_SLOT()
 
-				// === DIFF BTN ===
-				+ SHorizontalBox::Slot()
-				.AutoWidth()
-				.Padding(2, 0)
-				[
-					MakeToolbarButton(
-						"Icons.Tasks",
-						FText::FromString("Diff from last edit"),
-						FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
-				]			
+							// ============ SPACER ============
+							+SHorizontalBox::Slot()
+							.FillWidth(1.f)
+							[
+								SNew(SSpacer)
+							]
 
-				// === FIND BTN ===
-				+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
-				[
-					MakeToolbarButton(
-						"Icons.Search",
-						FText::FromString("Search for"),					
-						FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
-				]
 
-			   + HBOX_SEPARATOR_SLOT()
+							// ================= DIFF &  =================
+							+ SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								MakeDiffToolbar()
+							]
 
-				// --- Centro ---
-				// === COMBO ===
-				+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
-				[
-					SNew(SComboBox<TSharedPtr<FString>>)
-						.OptionsSource(&ComboItems)
-						.OnGenerateWidget(this, &SLessonToolbar::GenerateComboItem)
-						[					
-							SNew(STextBlock).Text(ActiveLesson ? 
-								FText::FromString(ActiveLesson->LessonMode) :
-								FText::FromString("Mode"))
+
+							// ============ SPACER ============
+							+SHorizontalBox::Slot()
+							.FillWidth(1.f)
+							[
+								SNew(SSpacer)
+							]
+
+
+							// ================= CENTER =================
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								MakeCenterToolbar()
+							]
+
+
+							// ============ SPACER ============
+							+SHorizontalBox::Slot()
+							.FillWidth(1.f)
+							[
+								SNew(SSpacer)
+							]
+
+
+							// ================= RIGHT =================
+							+SHorizontalBox::Slot()
+							.AutoWidth()
+							[
+								MakeToolbarSequenceBox()
+							]
 						]
 				]
+		];
+}
 
-				+ SHorizontalBox::Slot().AutoWidth().Padding(8, 0)
+TSharedRef<SWidget> SLessonToolbar::MakeLeftToolbar()
+{
+	return SNew(SHorizontalBox)
+
+		+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
+		[
+			// === Import ===
+			MakeToolbarButton(
+				"Icons.Import",
+				FText::FromString("Open Procedure"),
+				FOnClicked::CreateSP(this, &SLessonToolbar::OnOpenProcedureFile))
+		]
+
+		+ SHorizontalBox::Slot().AutoWidth().Padding(2, 0)
+		[
+			// === SAVE ===
+			MakeToolbarButton(
+				 "Icons.Save",
+				 //"Icons.SaveChanged"
+				 FText::FromString("Save Procedure"),					
+				 FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
+		]
+
+		+ SHorizontalBox::Slot().AutoWidth().Padding(2, 0)
+		[
+			// === Open Folder ===
+			MakeToolbarButton(
+				"Icons.BrowseContent",
+				FText::FromString("Open Folder"),
+				FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
+		];
+}
+
+TSharedRef<SWidget> SLessonToolbar::MakeDiffToolbar()
+{
+	return SNew(SHorizontalBox)
+
+		+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
+		[
+			// === DIFF BTN ===
+			MakeToolbarButton(
+				"Icons.Tasks",
+				FText::FromString("Diff from last edit"),
+				FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
+		]
+
+	+ SHorizontalBox::Slot().AutoWidth().Padding(2, 0)
+		[
+			// === FIND BTN ===
+			MakeToolbarButton(
+				"Icons.Search",
+				FText::FromString("Search for"),					
+				FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
+		];
+}
+
+
+TSharedRef<SWidget> SLessonToolbar::MakeCenterToolbar()
+{
+	return SNew(SHorizontalBox)
+
+		+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
+		[
+			// === COMBO ===
+			SNew(SComboBox<TSharedPtr<FString>>)
+				.OptionsSource(&ComboItems)
+				.OnGenerateWidget(this, &SLessonToolbar::GenerateComboItem)
 				[
-					MakeToolbarButton(
-						"LevelEditor.AddActor",
-						FText::FromString("Show / Add Window"),
-						FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
-				]
-
-				+ HBOX_SEPARATOR_SLOT()
-
-				// --- Destra ---
-				+ SHorizontalBox::Slot().AutoWidth().HAlign(HAlign_Right).Padding(8, 0)
-				[
-					MakeToolbarSequenceBox()
+					SNew(STextBlock)
+						.Text(FText::FromString("Mode"))
 				]
 		]
-		]		
-	];
+
+	+ SHorizontalBox::Slot().AutoWidth().Padding(5, 0)
+		[
+			MakeToolbarButton(
+				"LevelEditor.AddActor",
+				FText::FromString("Show / Add Window"),
+				FOnClicked::CreateSP(this, &SLessonToolbar::OnSaveProcedureFIle))
+		];
 }
 
 TSharedRef<SWidget> SLessonToolbar::GenerateComboItem(TSharedPtr<FString> InItem)
@@ -166,7 +215,7 @@ TSharedRef<SWidget> SLessonToolbar::MakeToolbarSequenceBox()
 				.ToolTipText(FText::FromString("Play"))
 				[
 					SNew(SImage)
-						.Image(FEditorStyle::GetBrush("PlayWorld.PlayInViewport"))
+						.Image(FAppStyle::GetBrush("PlayWorld.PlayInViewport"))
 
 				]
 		]
@@ -191,7 +240,7 @@ TSharedRef<SWidget> SLessonToolbar::MakeToolbarSequenceBox()
 				.ToolTipText(FText::FromString("Pause"))
 				[
 					SNew(SImage)
-						.Image(FEditorStyle::GetBrush("PlayWorld.PausePlaySession.Small"))
+						.Image(FAppStyle::GetBrush("PlayWorld.PausePlaySession.Small"))
 				]
 		]
 
@@ -203,7 +252,7 @@ TSharedRef<SWidget> SLessonToolbar::MakeToolbarSequenceBox()
 				.ToolTipText(FText::FromString("Stop"))
 				[
 					SNew(SImage)
-						.Image(FEditorStyle::GetBrush("PlayWorld.StopPlaySession.Small"))
+						.Image(FAppStyle::GetBrush("PlayWorld.StopPlaySession.Small"))
 				]
 		];		
 }

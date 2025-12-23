@@ -19,23 +19,39 @@ void SLessonTabBar::Construct(const FArguments& InArgs)
     LessonManager->OnLessonListChanged.AddRaw(this, &SLessonTabBar::RebuildTabs);
     LessonManager->OnActiveLessonChanged.AddRaw(this, &SLessonTabBar::RebuildTabs);
 
-
     ChildSlot
     [
+        // --- TAB CONTAINER ---
+
         SNew(SHorizontalBox)
-			+ SHorizontalBox::Slot()
-            [
-                SAssignNew(TabContainer, SHorizontalBox)
-                       
-            ]
-			+ SHorizontalBox::Slot()   
-            .Padding(5,0)
-            [
-                SAssignNew(AddTabButton, SButton)
-					.ButtonStyle(FAppStyle::Get(), "SimpleButton")
-					.Text(FText::FromString("+"))
-					.OnClicked(FOnClicked::CreateSP(this, &SLessonTabBar::OnAddTabButtonClicked))
-			]
+		+ SHorizontalBox::Slot()
+        .AutoWidth()
+        [
+            SAssignNew(TabContainer, SHorizontalBox)
+        ]
+
+        // --- ADD TAB BUTTON ---
+
+        +SHorizontalBox::Slot()
+        .AutoWidth() 
+        .Padding(2, 0)
+        [
+            SAssignNew(AddTabButton, SButton)
+                .ButtonStyle(FAppStyle::Get(), "SimpleButton")
+                .ContentPadding(0)
+                .OnClicked(FOnClicked::CreateSP(this, &SLessonTabBar::OnAddTabButtonClicked))
+                [                
+                    SNew(SBox)
+                        .WidthOverride(28.f)
+                        .HeightOverride(28.f)
+                        .HAlign(HAlign_Center)
+                        .VAlign(VAlign_Center)
+                        [
+                            SNew(STextBlock)
+                                .Text(FText::FromString("+"))
+                        ]
+                ]
+        ]
         
     ];
 
@@ -53,14 +69,14 @@ void SLessonTabBar::RebuildTabs()
     for (int32 i = 0; i < Lessons.Num(); ++i)
     {
         const bool bIsActive = (i == LessonManager->ActiveLessonIndex);
-        const FString TabLabel = Lessons[i]->LessonName.IsEmpty() ? TEXT("Untitled") : Lessons[i]->LessonName;
+        const FString TabLabel = Lessons[i]->LessonName.IsEmpty() ? TEXT("Untitled") : (Lessons[i]->LessonName + " - " + Lessons[i]->LessonMode);
 
         TabContainer->AddSlot()
             .AutoWidth()
             .Padding(5, 2)
             [
                 SNew(SButton)
-                    .ButtonColorAndOpacity(bIsActive ? FLinearColor(0.2f, 0.4f, 1.f) : FLinearColor(0.15f, 0.15f, 0.15f))
+                    .ButtonColorAndOpacity(bIsActive ? SelectedTabColor : UnselectedTabColor)
                     .OnClicked(FOnClicked::CreateSP(this, &SLessonTabBar::OnTabClicked, i))
                     [
                         SNew(STextBlock)
@@ -81,6 +97,18 @@ FReply SLessonTabBar::OnTabClicked(int32 Index)
 
 FReply SLessonTabBar::OnAddTabButtonClicked()
 {
+    if (LessonManager.IsValid())
+    {
+        //LessonManager->AddLesson();
+        ULessonData* NewLesson = NewObject<ULessonData>();
+
+        if (NewLesson)
+        {
+            NewLesson->LessonName = "";
+            NewLesson->LessonMode = "VI";
+            LessonManager->AddLesson(NewLesson);
+        }
+    }
     return FReply::Handled();
 }
 

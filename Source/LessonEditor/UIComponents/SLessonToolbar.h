@@ -31,6 +31,10 @@ public:
 private:
 	TSharedPtr<FLessonManager> LessonManager;
 
+	TSharedRef<SWidget> MakeLeftToolbar();
+	TSharedRef<SWidget> MakeDiffToolbar();
+	TSharedRef<SWidget> MakeCenterToolbar();
+
 
 	TArray<TSharedPtr<FString>> ComboItems;
 	TSharedRef<SWidget> GenerateComboItem(TSharedPtr<FString> InItem);

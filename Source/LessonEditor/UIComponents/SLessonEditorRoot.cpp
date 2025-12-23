@@ -42,5 +42,8 @@ void SLessonEditorRoot::Construct(const FArguments& InArgs)
                 .LessonManager(LessonManager)
         ]
     ];
+
+
+    //LessonManager->AddLesson();
 }
 END_SLATE_FUNCTION_BUILD_OPTIMIZATION

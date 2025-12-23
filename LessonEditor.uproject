@@ -1,6 +1,6 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.6",
+	"EngineAssociation": "{87FEEDDA-41B7-F99E-1496-FDB9161F0EE5}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
@@ -22,6 +22,10 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "SlateInsights",
+			"Enabled": true
 		}
 	]
 }

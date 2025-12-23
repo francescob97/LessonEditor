@@ -24,11 +24,14 @@ public:
 
 private:
 	TSharedPtr<FLessonManager> LessonManager;
-	TSharedPtr<SHorizontalBox> TabContainer;
 
+	TSharedPtr<SHorizontalBox> TabContainer;
 	TSharedPtr<SButton> AddTabButton;
 
 	void RebuildTabs();
 	FReply OnTabClicked(int32 Index);
 	FReply OnAddTabButtonClicked();
+
+	FLinearColor SelectedTabColor = FLinearColor(0.2f, 0.4f, 1.f);
+	FLinearColor UnselectedTabColor = FLinearColor(0.15f, 0.15f, 0.15f);
 };
